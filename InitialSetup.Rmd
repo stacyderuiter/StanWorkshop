@@ -1,0 +1,98 @@
+---
+title: "Initial Setup"
+author: "Stacy DeRuiter"
+date: "6/6/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+```
+
+## Info sources
+
+I followed instructions from two web sites:
+
+- <https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started>
+- <https://github.com/stan-dev/rstan/issues/633>
+
+## Installation of RStan
+
+First, install the package:
+
+```{r}
+install.packages("rstan", repos = "https://cloud.r-project.org/", dependencies = TRUE)
+```
+
+Verify that the result is `TRUE`:
+
+```{r}
+pkgbuild::has_build_tools(debug = TRUE)
+```
+
+Run this:
+
+```{r}
+dotR <- file.path(Sys.getenv("HOME"), ".R")
+if (!file.exists(dotR)) dir.create(dotR)
+M <- file.path(dotR, ifelse(.Platform$OS.type == "windows", "Makevars.win", "Makevars"))
+if (!file.exists(M)) file.create(M)
+cat("\nCXX14FLAGS=-O3 -march=native -mtune=native",
+    if( grepl("^darwin", R.version$os)) "CXX14FLAGS += -arch x86_64 -ftemplate-depth-256" else 
+    if (.Platform$OS.type == "windows") "CXX11FLAGS=-O3 -march=native -mtune=native" else
+    "CXX14FLAGS += -fPIC",
+    file = M, sep = "\n", append = TRUE)
+```
+
+Then, run this code to edit the file makevars.Win:
+
+```{r}
+M <- file.path(Sys.getenv("HOME"), ".R", ifelse(.Platform$OS.type == "windows", "Makevars.win", "Makevars"))
+file.edit(M)
+```
+
+Add the line:
+
+```{r}
+CXX14=$(BINPREF)g++ -O2 -march=native -mtune=native
+```
+
+## Test Model
+
+Create and run a test model.
+
+Create the file `stantest-8schools.stan` as directed at <https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started>.
+
+Then run: 
+
+```{r}
+library(rstan)
+options(mc.cores = parallel::detectCores())
+rstan_options(auto_write = TRUE)
+
+schools_dat <- list(J = 8, 
+                    y = c(28,  8, -3,  7, -1,  1, 18, 12),
+                    sigma = c(15, 10, 16, 11,  9, 11, 10, 18))
+
+fit <- stan(file = '8schools.stan', data = schools_dat)
+```
+
+Viewing the results:
+
+```{r}
+print(fit)
+plot(fit)
+pairs(fit, pars = c("mu", "tau", "lp__"))
+
+la <- extract(fit, permuted = TRUE) # return a list of arrays 
+mu <- la$mu 
+
+### return an array of three dimensions: iterations, chains, parameters 
+a <- extract(fit, permuted = FALSE) 
+
+### use S3 functions on stanfit objects
+a2 <- as.array(fit)
+m <- as.matrix(fit)
+d <- as.data.frame(fit)
+```
+
