@@ -1,0 +1,77 @@
+---
+title: "Stan Workshop Notes"
+author: "Stacy DeRuiter"
+date: "6/10/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Reference Info
+## Leaders
+
+- Jonah Sol Gabry - Columbia University
+- Vianey Leos Barajas - Iowa State University
+
+## Relevant Websites
+
+- [Workshop website](https://rpruim.github.io/StanWorkshop/)
+    - Includes links to slides, datasets, etc.
+- [Participant list](https://docs.google.com/document/d/1bZkLAZqAhwgsyZS0HO8_YLU0Li97LxNqBZYgXCZNRQw/edit#)
+- [QnA doc - put things here for Jonah to address with reading list at the end](https://docs.google.com/document/d/1Cfpq9_lg1ShZpinBYWqtzb6OsE5LKdbljrsJYvwaqNU/edit?usp=sharing)
+- [Jonah's GitHub](https://github.com/jgabry)
+
+# Day 1
+
+## What is Stan?
+Now, it's a big, wide-ranging project!
+
+Software ecosystem for Modern Bayesian Inference. "Ecosystem" because there's the Stan language, but there are a lot of peripheral packages, tools, etc. that contribute. "Modern" is *not worrying about conjugate prior distributions* and other things that you "had to" do because of computational considerations. A change from by-hand, JAGS, etc.
+
+Stan language is an open source probabilistic programming language with inference algorithms (separates model specification and estimation, although these two DO interact a lot still). You "write down the model" and Stan "fits if for you."
+
+Named after Stanislaw Ulam (Monte Carlo method, and also the H-bomb...)
+
+([But maybe another name would have been better...](https://statmodeling.stat.columbia.edu/2019/04/29/we-shouldntve-called-it-stan-i-shouldve-listened-to-bob-and-hadley/))
+
+### The Stan Program
+
+- Under the hood it's written in C++, so anything you write gets translated for you and compiled. (Efficiency and robustness of the code)
+- A Stan program has two parts:
+    - declares data and (constrained) parameter variables
+    - defines the log posterior (or penalized likelihood - sort of a MLE/optimization approach)
+- Stan **Inference** includes:
+    - MCMC for full Bayesian inference
+    - Variational Bayes for approximate Bayesian inference ("they kind of work...okay...sometimes...")
+    - Optimization for penalized MLE for simple cases
+- Can be run through R, Python, Matlab, and more...
+
+## Bayesian Workflow
+
+- Exploratory data analysis
+- Prior predictive checking (see paper by JSG) -- make predictions from prior to sense-check setup
+    - For example, most of our models will be **generative** so we can simulate from the model (and the prior, or more generally some set of possible parameters/estimates) and see what the implications/details of our model specification are in terms of the resulting data.
+    - Using vague/non-informative priors, we can get an ida about what our priors imply about the kinds of data our model can generate.
+    - "Fake data is almost as useful as real data"
+    - We can see where the model is/is not consistent with prior scientific data about the situation (or just common-sense understanding of the situation at hand/how the world works)
+    - Can also compare *prior* and *posterior* predictions to see "how much we learned"
+    - Make sure we are not making the (possibly noisy, not-that-strong, highly variable) data *overcome* a really unrealistic prior
+- Model fitting, algorithm diagnostics
+- Posterior prediction checking (including generating realizations)
+- Model comparison (cross-validation, averaging, etc.)
+- [Visualization for Bayesian workflows](https://arxiv.org/abs/1709.01449)
+
+## Posterior predictive checks
+
+- Moving from parameter estimates ("not real") to predicted data ("real") for **visual model evaluation**
+
+
+
+
+## Notation notes
+
+- $N_+(\mu, \sigma)$ means the positive half of a normal distribution. 
+- For this workshop - second parameter of a normal $N(\mu, \sigma)$ is the SD, not the variance
+- $\widetilde{y}$ in **or** out-of-sample predictions
