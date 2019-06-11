@@ -2,7 +2,10 @@
 title: "Stan Workshop Notes"
 author: "Stacy DeRuiter"
 date: "6/10/2019"
-output: html_document
+output: 
+    html_document:
+        toc: TRUE
+        toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -67,10 +70,17 @@ Named after Stanislaw Ulam (Monte Carlo method, and also the H-bomb...)
 
 - Moving from parameter estimates ("not real") to predicted data ("real") for **visual model evaluation**
 
+# Day 1 Recap/Workflow
+
+1. Define a model
+2. Write Stan code
+3. Prior predictive checks
+4. Fit model
+5. Posterior predictive checks
 
 
 
-## Notation notes
+# Notation notes
 
 - $N_+(\mu, \sigma)$ means the positive half of a normal distribution. 
 - For this workshop - second parameter of a normal $N(\mu, \sigma)$ is the SD, not the variance
